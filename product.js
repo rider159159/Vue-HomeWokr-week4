@@ -17,23 +17,25 @@ const app = Vue.createApp({
   },
   methods: {
     openProductModal(status,item){
+      console.log(status=== 'new')
       if(status === 'new'){
         this.tempProduct = {},
-        this.$refs.productModal.openModal();
         this.isNew = true;
+        this.$refs.productModal.openModal();
       }else{
         this.tempProduct = {...item}
-        this.$refs.productModal.openModal();
         this.isNew =false;
+        this.$refs.productModal.openModal();
       }
     },
-    getData(page){
+    getData(page=1){
       let url = `${apiUrl}/api/${apiPath}/products`;
       if(page !== undefined){
         url =  `${apiUrl}/api/${apiPath}/products?page=${page}`;
       }
       axios.get(url)
         .then((response) => {
+          console.log(response)
           this.products = response.data.products;
           this.pages = response.data.pagination;
           this.productQuantity = this.products.length;
@@ -45,16 +47,6 @@ const app = Vue.createApp({
       axios.delete(url)
       .then(() => {
         this.getData();
-      })
-    },
-    updateImg(){
-      const url = `${apiUrl}/api/${apiPath}/admin/upload`;
-      const file= document.querySelector('#file').files[0];
-      const formData = new FormData();
-      formData.append('file-to-upload',file)
-      axios.post(url,formData)
-      .then((res)=>{
-        this.tempProduct.imageUrl = res.data.imageUrl
       })
     },
     // 驗證

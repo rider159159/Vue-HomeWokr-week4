@@ -19,9 +19,6 @@ export default {
       this.modal.hide();
     },
     updateProduct(){
-      console.log('updateProduct')
-      this.tempProduct.origin_price = Number(this.tempProduct.origin_price);
-      this.tempProduct.price =  Number(this.tempProduct.price);
       const product = {
       data: this.tempProduct 
       }
@@ -33,10 +30,23 @@ export default {
           httpMethod = 'put';
         }
         axios[httpMethod](url, product)
-        .then(() => {
+        .then((res) => {
+          console.log(res)
           this.$emit('getProduct')
-          this.closeModal();
+          // this.closeModal();
         })
+    },
+    updateImg(){
+      const url = `https://vue3-course-api.hexschool.io/api/${this.apiPath}/admin/upload`;
+      const file= document.querySelector('#file').files[0];
+      const formData = new FormData();
+      formData.append('file-to-upload',file)
+      axios.post(url,formData)
+      .then((res)=>{
+        this.$emit('getImage',res.data.imageUrl)
+
+        this.tempProduct.imageUrl=res.data.imageUrl
+      })
     },
   },
   template:`
@@ -82,12 +92,12 @@ export default {
             <div class="row">
               <div class="form-group col-md-6">
                 <label for="origin_price">原價</label>
-                <input id="origin_price" v-model="tempProduct.origin_price" type="number" class="form-control"
+                <input id="origin_price" v-model.number ="tempProduct.origin_price" type="number" class="form-control"
                   placeholder="請輸入原價">
               </div>
               <div class="form-group col-md-6">
                 <label for="price">售價</label>
-                <input id="price" v-model="tempProduct.price" type="number" class="form-control"
+                <input id="price" v-model.number ="tempProduct.price" type="number" class="form-control"
                   placeholder="請輸入售價">
               </div>
             </div>
